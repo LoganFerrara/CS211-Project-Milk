@@ -15,6 +15,8 @@ Braeden Jefferson: braedcrbs
 
 Cole McGinnis: colex511
 
+Logan Ferrara: LoganFerrara
+
 Task Plan
 
 Logan: Set up the repository, organize starter files, and add other team members.
