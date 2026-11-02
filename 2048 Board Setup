@@ -1,0 +1,22 @@
+int print_board(int board[][5], int numrows = 5)
+{
+    cout << endl << "\t-----------------------------------------" << endl;
+    for (int r = 0; r < numrows; r++)
+    {
+        for (int c = 0; c < 5; c++)
+        {
+            if(board[r][c] > 0)
+                cout << "\t|" << right << setw(6) << setfill(' ') << board[r][c];
+            else
+                cout << "\t|" << right << setw(6) << setfill(' ') << " ";
+        }
+        cout << "\t|" << endl;
+        cout << "\t-----------------------------------------" << endl;
+    }
+    cout << "\t" << endl << endl;
+    return 0;
+}
+
+//Loops through the 2D array coordinates (r and c).
+//Uses <iomanip> stream manipulators (setw(6) and setfill(' ')) to maintain structural vertical columns, ensuring multi-digit numbers (like 1024) do not warp the layout.
+//Formats empty tiles (0) into blank space characters (" ") for clean console aesthetics.
