@@ -13,7 +13,7 @@ int main()
     int length = 0;
     bool allDigits = true;
 
-    while (cardNumber[length] != '\0')
+    while (cardNumber[length] != '\0')                    //lenght verification, add 1 to length until ('0/');
     {
         length++;
     }
