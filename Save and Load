@@ -41,7 +41,26 @@ int load_game(int board[][5], int numrows = 5, string filename = "savegame.txt")
             inFile >> board[r][c];
         }
     }
-    
-    inFile.close();
-    return 1;
+
+
+//CODE ^^^^^^^
+//HOW TO IMPLEMENT vvvvvv
+
+int choice;
+cout << "1. Save Game\n2. Load Game\nChoice: ";
+cin >> choice;
+
+if (choice == 1) {
+    if (save_game(board)) {
+        cout << "Game saved successfully!" << endl;
+    } else {
+        cout << "Error: Could not write save file." << endl;
+    }
+} else if (choice == 2) {
+    if (load_game(board)) {
+        cout << "Game loaded successfully!" << endl;
+        print_board(board);
+    } else {
+        cout << "Error: No save file found." << endl;
+    }
 }
