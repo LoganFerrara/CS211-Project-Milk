@@ -1,0 +1,335 @@
+#include <iostream>
+#include <random>
+#include <iomanip>
+#include <fstream>
+
+using namespace std;
+
+void move_left(int board[][5], int numrows = 5) {
+    for (int r = 0; r < numrows; r++) {
+        // Step 1: Slide all non-zero numbers to the left
+        int temp[5] = {0};
+        int pos = 0;
+        for (int c = 0; c < 5; c++) {
+            if (board[r][c] != 0) {
+                temp[pos++] = board[r][c];
+            }
+        }
+
+        // Step 2: Merge adjacent matching numbers
+        for (int c = 0; c < 4; c++) {
+            if (temp[c] != 0 && temp[c] == temp[c + 1]) {
+                temp[c] *= 2;
+                temp[c + 1] = 0;
+            }
+        }
+
+        // Step 3: Slide again to fill gaps created by merges
+        int final_row[5] = {0};
+        pos = 0;
+        for (int c = 0; c < 5; c++) {
+            if (temp[c] != 0) {
+                final_row[pos++] = temp[c];
+            }
+        }
+
+        // Copy back to the main board
+        for (int c = 0; c < 5; c++) {
+            board[r][c] = final_row[c];
+        }
+    }
+}
+
+void move_right(int board[][5], int numrows = 5) {
+    for (int r = 0; r < numrows; r++) {
+        // Step 1: Slide all non-zero numbers to the right
+        int temp[5] = {0};
+        int pos = 4;
+        for (int c = 4; c >= 0; c--) {
+            if (board[r][c] != 0) {
+                temp[pos--] = board[r][c];
+            }
+        }
+
+        // Step 2: Merge adjacent matching numbers from right to left
+        for (int c = 4; c > 0; c--) {
+            if (temp[c] != 0 && temp[c] == temp[c - 1]) {
+                temp[c] *= 2;
+                temp[c - 1] = 0;
+            }
+        }
+
+        // Step 3: Slide again to the right
+        int final_row[5] = {0};
+        pos = 4;
+        for (int c = 4; c >= 0; c--) {
+            if (temp[c] != 0) {
+                final_row[pos--] = temp[c];
+            }
+        }
+
+        // Copy back to the main board
+        for (int c = 0; c < 5; c++) {
+            board[r][c] = final_row[c];
+        }
+    }
+}
+
+void move_up(int board[][5], int numrows = 5) {
+    for (int c = 0; c < 5; c++) {
+        // Step 1: Slide all non-zero numbers up
+        int temp[5] = {0};
+        int pos = 0;
+        for (int r = 0; r < numrows; r++) {
+            if (board[r][c] != 0) {
+                temp[pos++] = board[r][c];
+            }
+        }
+
+        // Step 2: Merge adjacent matching numbers from top to bottom
+        for (int r = 0; r < numrows - 1; r++) {
+            if (temp[r] != 0 && temp[r] == temp[r + 1]) {
+                temp[r] *= 2;
+                temp[r + 1] = 0;
+            }
+        }
+
+        // Step 3: Slide again up
+        int final_col[5] = {0};
+        pos = 0;
+        for (int r = 0; r < numrows; r++) {
+            if (temp[r] != 0) {
+                final_col[pos++] = temp[r];
+            }
+        }
+
+        // Copy back to the main board
+        for (int r = 0; r < numrows; r++) {
+            board[r][c] = final_col[r];
+        }
+    }
+}
+
+void move_down(int board[][5], int numrows = 5) {
+    for (int c = 0; c < 5; c++) {
+        // Step 1: Slide all non-zero numbers down
+        int temp[5] = {0};
+        int pos = numrows - 1;
+        for (int r = numrows - 1; r >= 0; r--) {
+            if (board[r][c] != 0) {
+                temp[pos--] = board[r][c];
+            }
+        }
+
+        // Step 2: Merge adjacent matching numbers from bottom to top
+        for (int r = numrows - 1; r > 0; r--) {
+            if (temp[r] != 0 && temp[r] == temp[r - 1]) {
+                temp[r] *= 2;
+                temp[r - 1] = 0;
+            }
+        }
+
+        // Step 3: Slide again down
+        int final_col[5] = {0};
+        pos = numrows - 1;
+        for (int r = numrows - 1; r >= 0; r--) {
+            if (temp[r] != 0) {
+                final_col[pos--] = temp[r];
+            }
+        }
+
+        // Copy back to the main board
+        for (int r = 0; r < numrows; r++) {
+            board[r][c] = final_col[r];
+        }
+    }
+}
+
+void print_board(int board[][5], int numrows = 5) {
+    cout << endl << "\t-----------------------------------------" << endl;
+    for (int r = 0; r < numrows; r++) {
+        for (int c = 0; c < 5; c++) {
+            if (board[r][c] > 0)
+                cout << "\t|" << right << setw(6) << setfill(' ') << board[r][c];
+            else
+                cout << "\t|" << right << setw(6) << setfill(' ') << " ";
+        }
+        cout << "\t|" << endl;
+        cout << "\t-----------------------------------------" << endl;
+    }
+    cout << "\t" << endl << endl;
+}
+
+void insert_random(int board[][5], int numrows = 5) {
+    int r, c;
+    int empty_count = 0;
+    for (int r = 0; r < numrows; r++) {
+        for (int c = 0; c < 5; c++) {
+            if (board[r][c] == 0)
+                empty_count++;
+        }
+    }
+    if (empty_count > 0) {
+        while (true) {
+            r = rand() % numrows;
+            c = rand() % 5;
+            if (board[r][c] == 0) {
+                board[r][c] = 2 * (1 + (rand() % 2));
+                break;
+            }
+        }
+    }
+}
+
+/**
+ * Saves the current state of the board to a text file.
+ * Returns 1 if the save was successful, or 0 if the file could not be opened.
+ */
+int save_game(int board[][5], int numrows = 5, const char* filename = "savegame.txt") {
+    ofstream outFile(filename);
+
+    if (!outFile) {
+        return 0;
+    }
+
+    for (int r = 0; r < numrows; r++) {
+        for (int c = 0; c < 5; c++) {
+            outFile << board[r][c] << " ";
+        }
+        outFile << endl;
+    }
+
+    outFile.close();
+    return 1;
+}
+
+/**
+ * Loads a saved board state from a text file into the game array.
+ * Returns 1 if the load was successful, or 0 if the save file was missing.
+ */
+int load_game(int board[][5], int numrows = 5, const char* filename = "savegame.txt") {
+    ifstream inFile(filename);
+
+    if (!inFile) {
+        return 0;
+    }
+
+    for (int r = 0; r < numrows; r++) {
+        for (int c = 0; c < 5; c++) {
+            inFile >> board[r][c];
+        }
+    }
+
+    inFile.close();
+    return 1;
+}
+
+int board_changed(int old_board[][5], int new_board[][5], int numrows = 5) {
+    for (int r = 0; r < numrows; r++) {
+        for (int c = 0; c < 5; c++) {
+            if (old_board[r][c] != new_board[r][c]) {
+                return 1;
+            }
+        }
+    }
+    return 0;
+}
+
+int can_move(int board[][5], int numrows = 5) {
+    for (int r = 0; r < numrows; r++) {
+        for (int c = 0; c < 5; c++) {
+            if (board[r][c] == 0) return 1;
+            if (c < 4 && board[r][c] == board[r][c + 1]) return 1;
+            if (r < numrows - 1 && board[r][c] == board[r + 1][c]) return 1;
+        }
+    }
+    return 0;
+}
+
+int has_won(int board[][5], int numrows = 5) {
+    for (int r = 0; r < numrows; r++) {
+        for (int c = 0; c < 5; c++) {
+            if (board[r][c] >= 2048) return 1;
+        }
+    }
+    return 0;
+}
+
+int main() {
+    random_device rd;
+    srand(rd());
+
+    int board[5][5] = {0};
+    int backup[5][5] = {0};
+    char move;
+    int won_notified = 0;
+
+    // Start game with two random tiles
+    insert_random(board);
+    insert_random(board);
+
+    while (true) {
+        print_board(board);
+
+        if (!won_notified && has_won(board)) {
+            cout << "\tCongratulations! You reached 2048! Keep playing or press 'q' to quit." << endl;
+            won_notified = 1;
+        }
+
+        if (!can_move(board)) {
+            cout << "\tGame Over! No more valid moves." << endl;
+            break;
+        }
+
+        cout << "\tEnter move (w = up, a = left, s = down, d = right, k = save, l = load, q = quit): ";
+        cin >> move;
+
+        if (move == 'q' || move == 'Q') {
+            cout << "\tThanks for playing!" << endl;
+            break;
+        } else if (move == 'k' || move == 'K') {
+            if (save_game(board)) {
+                cout << "\tGame saved successfully!" << endl;
+            } else {
+                cout << "\tError: Could not write save file." << endl;
+            }
+            continue;
+        } else if (move == 'l' || move == 'L') {
+            if (load_game(board)) {
+                cout << "\tGame loaded successfully!" << endl;
+                won_notified = has_won(board);
+            } else {
+                cout << "\tError: No save file found." << endl;
+            }
+            continue;
+        }
+
+        // Save current board state before moving
+        for (int r = 0; r < 5; r++) {
+            for (int c = 0; c < 5; c++) {
+                backup[r][c] = board[r][c];
+            }
+        }
+
+        if (move == 'w' || move == 'W') {
+            move_up(board);
+        } else if (move == 'a' || move == 'A') {
+            move_left(board);
+        } else if (move == 's' || move == 'S') {
+            move_down(board);
+        } else if (move == 'd' || move == 'D') {
+            move_right(board);
+        } else {
+            cout << "\tInvalid input! Please use w, a, s, d, k, l, or q." << endl;
+            continue;
+        }
+
+        // Only spawn a new tile if the move actually shifted or merged tiles
+        if (board_changed(backup, board)) {
+            insert_random(board);
+        }
+    }
+
+    return 0;
+}
+
