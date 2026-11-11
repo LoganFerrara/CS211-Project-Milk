@@ -1,0 +1,66 @@
+#include <fstream>
+// Make sure to add #include <fstream> at the top of your main file
+
+/**
+ * Saves the current state of the board to a text file.
+ * Returns 1 if the save was successful, or 0 if the file could not be opened.
+ */
+int save_game(int board[][5], int numrows = 5, string filename = "savegame.txt") {
+    ofstream outFile(filename);
+    
+    if (!outFile) {
+        // Return failure flag if the file cannot be created/opened
+        return 0; 
+    }
+    
+    for (int r = 0; r < numrows; r++) {
+        for (int c = 0; c < 5; c++) {
+            outFile << board[r][c] << " ";
+        }
+        outFile << endl;
+    }
+    
+    outFile.close();
+    return 1;
+}
+
+/**
+ * Loads a saved board state from a text file into the game array.
+ * Returns 1 if the load was successful, or 0 if the save file was missing.
+ */
+int load_game(int board[][5], int numrows = 5, string filename = "savegame.txt") {
+    ifstream inFile(filename);
+    
+    if (!inFile) {
+        // Return failure flag if the file does not exist
+        return 0; 
+    }
+    
+    for (int r = 0; r < numrows; r++) {
+        for (int c = 0; c < 5; c++) {
+            inFile >> board[r][c];
+        }
+    }
+
+
+//CODE ^^^^^^^
+//HOW TO IMPLEMENT vvvvvv
+
+int choice;
+cout << "1. Save Game\n2. Load Game\nChoice: ";
+cin >> choice;
+
+if (choice == 1) {
+    if (save_game(board)) {
+        cout << "Game saved successfully!" << endl;
+    } else {
+        cout << "Error: Could not write save file." << endl;
+    }
+} else if (choice == 2) {
+    if (load_game(board)) {
+        cout << "Game loaded successfully!" << endl;
+        print_board(board);
+    } else {
+        cout << "Error: No save file found." << endl;
+    }
+}
